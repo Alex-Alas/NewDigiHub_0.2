@@ -1,0 +1,60 @@
+datasource db {
+  provider = "sqlite"
+  // Wasp requires that the url is set to the DATABASE_URL environment variable.
+  url      = env("DATABASE_URL")
+}
+
+// Wasp requires the `prisma-client-js` generator to be present.
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+    id         Int       @id @default(autoincrement())
+    company    Company?  @relation(fields: [companyId], references: [id])
+    employee   Employee? @relation(fields: [employeeId], references: [id])
+    companyId  Int?
+    employeeId Int?
+}
+
+model Company {
+    id           Int        @id @default(autoincrement())
+    name         String
+    industry     String
+    sector       String
+    location     String
+    contactInfo  String
+    score        Int
+    level        Int
+    achievements String
+    employees    Employee[]
+    journeys     Journey[]
+    User         User[]
+}
+
+model Employee {
+    id           Int       @id @default(autoincrement())
+    name         String
+    position     String
+    score        Int
+    level        Int
+    contactInfo  String
+    achievements String
+    company      Company   @relation(fields: [companyId], references: [id])
+    companyId    Int
+    journeys     Journey[]
+    User         User[]
+}
+
+model Journey {
+    id          Int        @id @default(autoincrement())
+    name        String
+    description String
+    duration    Int
+    level       Int
+    price       Float
+    details     String
+    company     Company?   @relation(fields: [companyId], references: [id])
+    companyId   Int?
+    employees   Employee[]
+}
